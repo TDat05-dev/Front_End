@@ -1,0 +1,190 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60px 16px;
+}
+
+/* ---------- Thương hiệu ---------- */
+.brand {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.logo {
+  display: flex;
+  justify-content: center;
+  margin: 0;
+}
+
+.logoImage {
+  display: block;
+  height: 110px;
+  width: auto;
+}
+
+.tagline {
+  margin: 10px 0 0;
+  font-size: 20px;
+  line-height: 24px;
+  color: #0068ff;
+}
+
+/* ---------- Card ---------- */
+.card {
+  width: 400px;
+  overflow: hidden;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 58, 140, 0.12);
+}
+
+.cardHeader {
+  margin: 0;
+  padding: 16px 24px;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 15px;
+  font-weight: 600;
+  text-align: center;
+  color: #081c36;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px 32px 28px;
+}
+
+/* ---------- Ô nhập liệu ---------- */
+.control {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 46px;
+  border-bottom: 1px solid #d6dbe1;
+  transition: border-color 0.2s ease;
+}
+
+.control:focus-within {
+  border-bottom-color: #0068ff;
+}
+
+.icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  justify-content: center;
+  width: 20px;
+  font-size: 17px;
+  color: #7589a3;
+  transition: color 0.2s ease;
+}
+
+.control:focus-within .icon {
+  color: #0068ff;
+}
+
+.prefix {
+  flex-shrink: 0;
+  padding-right: 12px;
+  border-right: 1px solid #d6dbe1;
+  font-size: 15px;
+  line-height: 20px;
+  color: #081c36;
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  height: 46px;
+  padding: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 15px;
+  color: #081c36;
+}
+
+.input::placeholder {
+  color: #9aa5b4;
+}
+
+/* ---------- Điều khoản ---------- */
+.terms {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 4px;
+  font-size: 13px;
+  line-height: 20px;
+  color: #555;
+  cursor: pointer;
+}
+
+.terms input {
+  margin: 2px 0 0;
+  accent-color: #0068ff;
+  cursor: pointer;
+}
+
+.link {
+  font-weight: 500;
+  color: #0068ff;
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+/* ---------- Nút đăng ký ---------- */
+.submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 44px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 6px;
+  background: #0068ff;
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.submit:hover:not(:disabled) {
+  background: #0054cc;
+}
+
+.submit:focus-visible {
+  outline: 2px solid #0068ff;
+  outline-offset: 2px;
+}
+
+/* ---------- Footer ---------- */
+.footer {
+  padding: 16px;
+  border-top: 1px solid #e5e7eb;
+  font-size: 14px;
+  text-align: center;
+  color: #555;
+}
+
+@media (max-width: 480px) {
+  /* Màn hình nhỏ: card giãn theo bề ngang thay vì cố định 400px */
+  .card {
+    width: auto;
+    align-self: stretch;
+  }
+
+  .logoImage {
+    height: 88px;
+  }
+
+  .form {
+    padding: 16px 20px 24px;
+  }
+}
