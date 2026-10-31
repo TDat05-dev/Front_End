@@ -1,5 +1,5 @@
 :root {
-  font-family: system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   color: #081c36;
   color-scheme: light;
   font-synthesis: none;
@@ -23,3 +23,5 @@ button,
 input {
   font: inherit;
 }
+
+/*# sourceMappingURL=index.css.map */
