@@ -1,0 +1,12 @@
+@mixin mobile {
+  @media (max-width: 480px) {
+    @content;
+  }
+}
+
+// Căn giữa nội dung bằng flexbox
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
