@@ -5,7 +5,6 @@
   padding: 60px 16px;
 }
 
-/* ---------- Thương hiệu ---------- */
 .brand {
   margin-bottom: 24px;
   text-align: center;
@@ -22,6 +21,11 @@
   height: 110px;
   width: auto;
 }
+@media (max-width: 480px) {
+  .logoImage {
+    height: 88px;
+  }
+}
 
 .tagline {
   margin: 10px 0 0;
@@ -30,13 +34,18 @@
   color: #0068ff;
 }
 
-/* ---------- Card ---------- */
 .card {
   width: 400px;
   overflow: hidden;
   background: #fff;
   border-radius: 8px;
   box-shadow: 0 8px 24px rgba(0, 58, 140, 0.12);
+}
+@media (max-width: 480px) {
+  .card {
+    width: auto;
+    align-self: stretch;
+  }
 }
 
 .cardHeader {
@@ -55,8 +64,12 @@
   gap: 16px;
   padding: 24px 32px 28px;
 }
+@media (max-width: 480px) {
+  .form {
+    padding: 16px 20px 24px;
+  }
+}
 
-/* ---------- Ô nhập liệu ---------- */
 .control {
   display: flex;
   align-items: center;
@@ -65,9 +78,11 @@
   border-bottom: 1px solid #d6dbe1;
   transition: border-color 0.2s ease;
 }
-
 .control:focus-within {
   border-bottom-color: #0068ff;
+}
+.control:focus-within .icon {
+  color: #0068ff;
 }
 
 .icon {
@@ -78,10 +93,6 @@
   font-size: 17px;
   color: #7589a3;
   transition: color 0.2s ease;
-}
-
-.control:focus-within .icon {
-  color: #0068ff;
 }
 
 .prefix {
@@ -104,12 +115,10 @@
   font-size: 15px;
   color: #081c36;
 }
-
 .input::placeholder {
   color: #9aa5b4;
 }
 
-/* ---------- Điều khoản ---------- */
 .terms {
   display: flex;
   align-items: flex-start;
@@ -120,7 +129,6 @@
   color: #555;
   cursor: pointer;
 }
-
 .terms input {
   margin: 2px 0 0;
   accent-color: #0068ff;
@@ -132,12 +140,10 @@
   color: #0068ff;
   text-decoration: none;
 }
-
 .link:hover {
   text-decoration: underline;
 }
 
-/* ---------- Nút đăng ký ---------- */
 .submit {
   display: flex;
   align-items: center;
@@ -154,17 +160,14 @@
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
-
 .submit:hover:not(:disabled) {
   background: #0054cc;
 }
-
 .submit:focus-visible {
   outline: 2px solid #0068ff;
   outline-offset: 2px;
 }
 
-/* ---------- Footer ---------- */
 .footer {
   padding: 16px;
   border-top: 1px solid #e5e7eb;
@@ -173,18 +176,4 @@
   color: #555;
 }
 
-@media (max-width: 480px) {
-  /* Màn hình nhỏ: card giãn theo bề ngang thay vì cố định 400px */
-  .card {
-    width: auto;
-    align-self: stretch;
-  }
-
-  .logoImage {
-    height: 88px;
-  }
-
-  .form {
-    padding: 16px 20px 24px;
-  }
-}
+/*# sourceMappingURL=RegisterPage.module.css.map */

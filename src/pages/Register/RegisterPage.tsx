@@ -1,5 +1,4 @@
-import styles from '../../assets/css/RegisterPage.module.css'
-import styles from '../../scss/RegisterPage.module.scss'
+import styles from '../../assets/css/RegisterPage.module.scss'
 
 const APP_NAME = 'Loza'
 const LOGO_SRC = '/loza-logo.png'
