@@ -1,3 +1,10 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+// ============================================================
+// Trang Đăng ký
+// ============================================================
+
 .page {
   display: flex;
   flex-direction: column;
@@ -5,7 +12,7 @@
   padding: 60px 16px;
 }
 
-/* ---------- Thương hiệu ---------- */
+// ---------- Thương hiệu ----------
 .brand {
   margin-bottom: 24px;
   text-align: center;
@@ -21,22 +28,31 @@
   display: block;
   height: 110px;
   width: auto;
+
+  @include mobile {
+    height: 88px;
+  }
 }
 
 .tagline {
   margin: 10px 0 0;
   font-size: 20px;
   line-height: 24px;
-  color: #0068ff;
+  color: $color-primary;
 }
 
-/* ---------- Card ---------- */
+// ---------- Card ----------
 .card {
   width: 400px;
   overflow: hidden;
-  background: #fff;
+  background: $color-white;
   border-radius: 8px;
   box-shadow: 0 8px 24px rgba(0, 58, 140, 0.12);
+
+  @include mobile {
+    width: auto;
+    align-self: stretch;
+  }
 }
 
 .cardHeader {
@@ -46,7 +62,7 @@
   font-size: 15px;
   font-weight: 600;
   text-align: center;
-  color: #081c36;
+  color: $color-text;
 }
 
 .form {
@@ -54,9 +70,13 @@
   flex-direction: column;
   gap: 16px;
   padding: 24px 32px 28px;
+
+  @include mobile {
+    padding: 16px 20px 24px;
+  }
 }
 
-/* ---------- Ô nhập liệu ---------- */
+// ---------- Ô nhập liệu ----------
 .control {
   display: flex;
   align-items: center;
@@ -64,10 +84,15 @@
   height: 46px;
   border-bottom: 1px solid #d6dbe1;
   transition: border-color 0.2s ease;
-}
 
-.control:focus-within {
-  border-bottom-color: #0068ff;
+  // Khi ô input bên trong được focus → đổi màu viền và icon
+  &:focus-within {
+    border-bottom-color: $color-primary;
+
+    .icon {
+      color: $color-primary;
+    }
+  }
 }
 
 .icon {
@@ -76,12 +101,8 @@
   justify-content: center;
   width: 20px;
   font-size: 17px;
-  color: #7589a3;
+  color: $color-icon;
   transition: color 0.2s ease;
-}
-
-.control:focus-within .icon {
-  color: #0068ff;
 }
 
 .prefix {
@@ -90,7 +111,7 @@
   border-right: 1px solid #d6dbe1;
   font-size: 15px;
   line-height: 20px;
-  color: #081c36;
+  color: $color-text;
 }
 
 .input {
@@ -102,14 +123,14 @@
   outline: none;
   background: transparent;
   font-size: 15px;
-  color: #081c36;
+  color: $color-text;
+
+  &::placeholder {
+    color: $color-placeholder;
+  }
 }
 
-.input::placeholder {
-  color: #9aa5b4;
-}
-
-/* ---------- Điều khoản ---------- */
+// ---------- Điều khoản ----------
 .terms {
   display: flex;
   align-items: flex-start;
@@ -117,74 +138,56 @@
   margin-top: 4px;
   font-size: 13px;
   line-height: 20px;
-  color: #555;
+  color: $color-text-muted;
   cursor: pointer;
-}
 
-.terms input {
-  margin: 2px 0 0;
-  accent-color: #0068ff;
-  cursor: pointer;
+  input {
+    margin: 2px 0 0;
+    accent-color: $color-primary;
+    cursor: pointer;
+  }
 }
 
 .link {
   font-weight: 500;
-  color: #0068ff;
+  color: $color-primary;
   text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
-.link:hover {
-  text-decoration: underline;
-}
-
-/* ---------- Nút đăng ký ---------- */
+// ---------- Nút đăng ký ----------
 .submit {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @include flex-center;
   gap: 8px;
   height: 44px;
   margin-top: 10px;
   border: none;
   border-radius: 6px;
-  background: #0068ff;
+  background: $color-primary;
   font-size: 15px;
   font-weight: 600;
-  color: #fff;
+  color: $color-white;
   cursor: pointer;
   transition: background-color 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background: $color-primary-hover;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: 2px;
+  }
 }
 
-.submit:hover:not(:disabled) {
-  background: #0054cc;
-}
-
-.submit:focus-visible {
-  outline: 2px solid #0068ff;
-  outline-offset: 2px;
-}
-
-/* ---------- Footer ---------- */
+// ---------- Footer ----------
 .footer {
   padding: 16px;
   border-top: 1px solid #e5e7eb;
   font-size: 14px;
   text-align: center;
-  color: #555;
-}
-
-@media (max-width: 480px) {
-  /* Màn hình nhỏ: card giãn theo bề ngang thay vì cố định 400px */
-  .card {
-    width: auto;
-    align-self: stretch;
-  }
-
-  .logoImage {
-    height: 88px;
-  }
-
-  .form {
-    padding: 16px 20px 24px;
-  }
+  color: $color-text-muted;
 }

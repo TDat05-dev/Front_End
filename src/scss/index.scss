@@ -1,6 +1,12 @@
+@use 'variables' as *;
+
+// ============================================================
+// CSS toàn cục: reset, font, nền trang
+// ============================================================
+
 :root {
   font-family: system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  color: #081c36;
+  color: $color-text;
   color-scheme: light;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
