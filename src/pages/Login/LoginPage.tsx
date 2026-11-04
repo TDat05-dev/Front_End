@@ -21,14 +21,14 @@ export default function LoginPage() {
         <section className={styles.card} aria-label="Đăng nhập">
           <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
             <div className={styles.control}>
-              <span className={styles.icon}><i className="fa-solid fa-mobile-screen-button" aria-hidden="true" /></span>
-              <span className={styles.prefix}>+84</span>
-              <input className={styles.input} name="phone" type="tel" inputMode="numeric" placeholder="Số điện thoại" aria-label="Số điện thoại" autoComplete="tel-national" />
+              <span className={styles.icon}><i className="fa-regular fa-user" aria-hidden="true" /></span>
+              {/* API chỉ nhận tên người dùng gồm chữ cái, số và dấu gạch dưới */}
+              <input className={styles.input} name="user" type="text" placeholder="Tên người dùng" aria-label="Tên người dùng" autoComplete="username" pattern="[A-Za-z0-9_]+" title="Chỉ gồm chữ cái, số và dấu gạch dưới" required />
             </div>
 
             <div className={styles.control}>
               <span className={styles.icon}><i className="fa-solid fa-lock" aria-hidden="true" /></span>
-              <input className={styles.input} name="password" type={showPassword ? 'text' : 'password'} placeholder="Mật khẩu" aria-label="Mật khẩu" autoComplete="current-password" />
+              <input className={styles.input} name="password" type={showPassword ? 'text' : 'password'} placeholder="Mật khẩu" aria-label="Mật khẩu" autoComplete="current-password" required />
               <button
                   type="button"
                   className={styles.toggle}
@@ -42,10 +42,6 @@ export default function LoginPage() {
             <button type="submit" className={styles.submit}>
               Đăng nhập
             </button>
-
-            <a className={styles.forgot} href="/forgot-password">
-              Quên mật khẩu?
-            </a>
           </form>
 
           <footer className={styles.footer}>
