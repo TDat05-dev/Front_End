@@ -85,7 +85,6 @@
   border-bottom: 1px solid #d6dbe1;
   transition: border-color 0.2s ease;
 
-  // Khi ô input bên trong được focus → đổi màu viền và icon
   &:focus-within {
     border-bottom-color: $color-primary;
 
@@ -103,6 +102,28 @@
   font-size: 17px;
   color: $color-icon;
   transition: color 0.2s ease;
+}
+
+.toggle {
+  @include flex-center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  border-radius: 14px;
+  background: transparent;
+  font-size: 16px;
+  color: $color-icon;
+  cursor: pointer;
+
+  &:hover {
+    color: $color-primary;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+  }
 }
 
 .prefix {

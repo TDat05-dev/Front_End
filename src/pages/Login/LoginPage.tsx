@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import styles from '../../assets/css/LoginPage.module.scss'
 import logo from '../../assets/img/loza-logo.png'
 
@@ -46,9 +47,9 @@ export default function LoginPage() {
 
           <footer className={styles.footer}>
             Bạn chưa có tài khoản?{' '}
-            <a className={styles.link} href="/register">
+            <Link className={styles.link} to="/register">
               Đăng ký ngay
-            </a>
+            </Link>
           </footer>
         </section>
       </main>
