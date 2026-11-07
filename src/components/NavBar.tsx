@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import styles from '../assets/css/navbar.module.css'
 
 export default function NavBar(){
@@ -5,7 +6,7 @@ export default function NavBar(){
         <div className={styles.menu}>
             <div className={styles.listPage}>
                 <a href="/" className={styles.listItem}><i className="fa-solid fa-message"></i></a>
-                <a href="/" className={styles.listItem}><i className="fa-solid fa-user-group"></i></a>
+                <Link to="/friends" className={styles.listItem} aria-label="Danh sách bạn bè"><i className="fa-solid fa-user-group"></i></Link>
                 <a href="/" className={styles.listItem}><i className="fa-solid fa-gear"></i></a>
             </div>
             <button className={styles.profile}><i className="fa-solid fa-user"></i></button>
