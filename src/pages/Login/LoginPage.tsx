@@ -23,7 +23,6 @@ export default function LoginPage() {
           <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
             <div className={styles.control}>
               <span className={styles.icon}><i className="fa-regular fa-user" aria-hidden="true" /></span>
-              {/* API chỉ nhận tên người dùng gồm chữ cái, số và dấu gạch dưới */}
               <input className={styles.input} name="user" type="text" placeholder="Tên người dùng" aria-label="Tên người dùng" autoComplete="username" pattern="[A-Za-z0-9_]+" title="Chỉ gồm chữ cái, số và dấu gạch dưới" required />
             </div>
 
