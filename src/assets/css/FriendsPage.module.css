@@ -1,114 +1,9 @@
 .page {
   display: flex;
+  flex-direction: column;
   height: 100vh;
   margin-left: 64px;
   background: #fff;
-}
-
-.sidebar {
-  display: flex;
-  flex-direction: column;
-  flex-shrink: 0;
-  width: 344px;
-  border-right: 1px solid #e5e7eb;
-}
-@media (max-width: 768px) {
-  .sidebar {
-    display: none;
-  }
-}
-
-.sidebarTop {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  height: 64px;
-  padding: 0 16px;
-}
-
-.search {
-  display: flex;
-  flex: 1;
-  align-items: center;
-  gap: 8px;
-  height: 32px;
-  padding: 0 10px;
-  border-radius: 6px;
-  background: #eaedf0;
-  font-size: 13px;
-  color: #7589a3;
-}
-.search:focus-within {
-  outline: 1px solid #0068ff;
-  background: #fff;
-}
-.search input {
-  flex: 1;
-  min-width: 0;
-  border: none;
-  outline: none;
-  background: transparent;
-  font-size: 14px;
-  color: #081c36;
-}
-.search input::placeholder {
-  color: #9aa5b4;
-}
-
-.iconButton {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 32px;
-  height: 32px;
-  border: none;
-  border-radius: 6px;
-  background: transparent;
-  font-size: 15px;
-  color: #081c36;
-  cursor: pointer;
-}
-.iconButton:hover {
-  background: #f1f3f5;
-}
-
-.menu {
-  display: flex;
-  flex-direction: column;
-  padding-top: 8px;
-}
-
-.menuItem {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  height: 56px;
-  padding: 0 20px;
-  font-size: 15px;
-  font-weight: 500;
-  color: #081c36;
-  text-decoration: none;
-}
-.menuItem i {
-  width: 20px;
-  font-size: 17px;
-  text-align: center;
-}
-.menuItem:hover {
-  background: #f1f3f5;
-}
-
-.menuItemActive,
-.menuItemActive:hover {
-  background: #e5efff;
-}
-
-.content {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  min-width: 0;
 }
 
 .header {
@@ -134,11 +29,38 @@
   background: #f3f5f7;
 }
 
-.count {
-  margin: 0;
-  padding: 18px 0 14px;
-  font-size: 15px;
-  font-weight: 600;
+.tabs {
+  display: flex;
+  gap: 8px;
+  padding: 16px 0 12px;
+  overflow-x: auto;
+}
+
+.tab {
+  flex-shrink: 0;
+  height: 32px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 16px;
+  background: #e4e8ec;
+  font-size: 14px;
+  font-weight: 500;
+  color: #081c36;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.tab:hover {
+  background: #d8dde3;
+}
+.tab:focus-visible {
+  outline: 2px solid #0068ff;
+  outline-offset: 2px;
+}
+
+.tabActive,
+.tabActive:hover {
+  background: #0068ff;
+  color: #fff;
 }
 
 .panel {
@@ -207,6 +129,51 @@
   cursor: pointer;
 }
 
+.lookup {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 16px 8px;
+  padding: 12px 16px;
+  border: 1px dashed #c9d3df;
+  border-radius: 8px;
+}
+
+.lookupText {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  color: #555;
+  overflow-wrap: anywhere;
+}
+.lookupText strong {
+  color: #081c36;
+}
+
+.primaryButton {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 6px;
+  background: #0068ff;
+  font-size: 14px;
+  font-weight: 500;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.primaryButton:hover {
+  background: #0054cc;
+}
+.primaryButton:focus-visible {
+  outline: 2px solid #0068ff;
+  outline-offset: 2px;
+}
+
 .group + .group {
   margin-top: 4px;
 }
@@ -230,13 +197,9 @@
   gap: 12px;
   height: 64px;
   padding: 0 16px;
-  cursor: pointer;
 }
 .item:hover {
   background: #f1f3f5;
-}
-.item:hover .more {
-  visibility: visible;
 }
 
 .avatar {
@@ -247,15 +210,19 @@
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  object-fit: cover;
   font-size: 15px;
   font-weight: 600;
   color: #fff;
 }
 
-.name {
+.info {
+  display: flex;
   flex: 1;
+  flex-direction: column;
   min-width: 0;
+}
+
+.name {
   overflow: hidden;
   font-size: 15px;
   font-weight: 500;
@@ -263,32 +230,9 @@
   white-space: nowrap;
 }
 
-.more {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 32px;
-  height: 32px;
-  border: none;
-  border-radius: 6px;
-  background: transparent;
-  font-size: 16px;
-  color: #081c36;
-  cursor: pointer;
-  visibility: hidden;
-}
-.more:hover {
-  background: #dfe2e7;
-}
-.more:focus-visible {
-  visibility: visible;
-  outline: 2px solid #0068ff;
-}
-@media (hover: none) {
-  .more {
-    visibility: visible;
-  }
+.sub {
+  font-size: 13px;
+  color: #555;
 }
 
 .empty {
