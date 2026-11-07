@@ -5,7 +5,7 @@ export default function NavBar(){
     return(
         <div className={styles.menu}>
             <div className={styles.listPage}>
-                <a href="/" className={styles.listItem}><i className="fa-solid fa-message"></i></a>
+                <Link to="/chats" className={styles.listItem} aria-label="Chat"><i className="fa-solid fa-message"></i></Link>
                 <Link to="/friends" className={styles.listItem} aria-label="Danh sách bạn bè"><i className="fa-solid fa-user-group"></i></Link>
                 <Link to="/settings" className={styles.listItem} aria-label="Cài đặt"><i className="fa-solid fa-gear"></i></Link>
             </div>

@@ -95,6 +95,28 @@
   transition: color 0.2s ease;
 }
 
+.toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  border-radius: 14px;
+  background: transparent;
+  font-size: 16px;
+  color: #7589a3;
+  cursor: pointer;
+}
+.toggle:hover {
+  color: #0068ff;
+}
+.toggle:focus-visible {
+  outline: 2px solid #0068ff;
+}
+
 .prefix {
   flex-shrink: 0;
   padding-right: 12px;
