@@ -140,9 +140,19 @@
 .submit:hover:not(:disabled) {
   background: #0054cc;
 }
+.submit:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
 .submit:focus-visible {
   outline: 2px solid #0068ff;
   outline-offset: 2px;
+}
+
+.error {
+  margin: 0;
+  font-size: 14px;
+  color: #e53935;
 }
 
 .link {
