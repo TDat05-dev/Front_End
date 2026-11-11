@@ -1,12 +1,41 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useState, type FormEvent } from 'react'
+import { Link, Navigate, useNavigate } from 'react-router-dom'
+import { auth } from '../../auth/auth'
+import { request } from '../../services/socket'
 import styles from '../../assets/css/LoginPage.module.scss'
 import logo from '../../assets/img/loza-logo.png'
 
 const APP_NAME = 'Loza'
 
 export default function LoginPage() {
+  const navigate = useNavigate()
+  const [user, setUser] = useState('')
+  const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  if (auth.isAuthenticated) {
+    return <Navigate to="/chats" replace />
+  }
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    setError(null)
+
+    request('LOGIN', { user: user.trim(), pass: password })
+      .then((res) => {
+        if (res.status !== 'success') {
+          throw new Error('Sai tên người dùng hoặc mật khẩu')
+        }
+        navigate('/chats', { replace: true })
+      })
+      .catch((err: Error) => {
+        setError(err.message)
+        setLoading(false)
+      })
+  }
 
   return (
       <main className={styles.page}>
@@ -20,15 +49,15 @@ export default function LoginPage() {
         </header>
 
         <section className={styles.card} aria-label="Đăng nhập">
-          <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
+          <form className={styles.form} onSubmit={handleSubmit}>
             <div className={styles.control}>
               <span className={styles.icon}><i className="fa-regular fa-user" aria-hidden="true" /></span>
-              <input className={styles.input} name="user" type="text" placeholder="Tên người dùng" aria-label="Tên người dùng" autoComplete="username" pattern="[A-Za-z0-9_]+" title="Chỉ gồm chữ cái, số và dấu gạch dưới" required />
+              <input className={styles.input} name="user" type="text" placeholder="Tên người dùng" aria-label="Tên người dùng" autoComplete="username" value={user} onChange={(e) => setUser(e.target.value)} pattern="[A-Za-z0-9_]+" title="Chỉ gồm chữ cái, số và dấu gạch dưới" required />
             </div>
 
             <div className={styles.control}>
               <span className={styles.icon}><i className="fa-solid fa-lock" aria-hidden="true" /></span>
-              <input className={styles.input} name="password" type={showPassword ? 'text' : 'password'} placeholder="Mật khẩu" aria-label="Mật khẩu" autoComplete="current-password" required />
+              <input className={styles.input} name="password" type={showPassword ? 'text' : 'password'} placeholder="Mật khẩu" aria-label="Mật khẩu" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required />
               <button
                   type="button"
                   className={styles.toggle}
@@ -39,8 +68,10 @@ export default function LoginPage() {
               </button>
             </div>
 
-            <button type="submit" className={styles.submit}>
-              Đăng nhập
+            {error && <p className={styles.error} role="alert">{error}</p>}
+
+            <button type="submit" className={styles.submit} disabled={loading}>
+              {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
             </button>
           </form>
 

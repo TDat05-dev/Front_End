@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import NavBar from '../../components/NavBar'
 import styles from '../../assets/css/FriendsPage.module.scss'
-import { CONTACTS, type Contact, type ContactType } from '../../data/contacts'
+import { useSocket } from '../../hooks/useSocket'
+import type { Contact, ContactType } from '../../data/contacts'
 
 type SortOrder = 'asc' | 'desc'
 type TabKey = 'all' | ContactType
@@ -37,16 +38,19 @@ export default function FriendsPage() {
   const [keyword, setKeyword] = useState('')
   const [sortOrder, setSortOrder] = useState<SortOrder>('asc')
   const [tab, setTab] = useState<TabKey>('all')
+  const { data, loading, error } = useSocket<Contact[]>('GET_USER_LIST')
+
+  const contacts: Contact[] = (data ?? []).map((c) => ({ ...c, type: Number(c.type) as ContactType }))
 
   const query = keyword.trim()
-  const peopleCount = CONTACTS.filter((c) => c.type === 0).length
+  const peopleCount = contacts.filter((c) => c.type === 0).length
   const tabs: { key: TabKey; label: string; count: number }[] = [
-    { key: 'all', label: 'Tất cả', count: CONTACTS.length },
+    { key: 'all', label: 'Tất cả', count: contacts.length },
     { key: 0, label: 'Cá nhân', count: peopleCount },
-    { key: 1, label: 'Nhóm', count: CONTACTS.length - peopleCount },
+    { key: 1, label: 'Nhóm', count: contacts.length - peopleCount },
   ]
 
-  const sorted = CONTACTS
+  const sorted = contacts
       .filter((c) => tab === 'all' || c.type === tab)
       .filter((c) => normalize(c.name).includes(normalize(query)))
       .sort((a, b) => a.name.localeCompare(b.name, 'vi', { sensitivity: 'base' }) * (sortOrder === 'asc' ? 1 : -1))
@@ -125,7 +129,10 @@ export default function FriendsPage() {
                   </div>
               )}
 
-              {sections.length === 0 && !(query && tab !== 1) && (
+              {loading && <p className={styles.empty}>Đang tải danh bạ...</p>}
+              {error && <p className={styles.empty}>{error}</p>}
+
+              {!loading && !error && sections.length === 0 && !(query && tab !== 1) && (
                   <p className={styles.empty}>{query ? 'Không có kết quả phù hợp' : 'Danh bạ trống'}</p>
               )}
 
