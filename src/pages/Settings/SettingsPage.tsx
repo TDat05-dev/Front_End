@@ -1,8 +1,14 @@
 import { useState } from 'react'
 import NavBar from '../../components/NavBar'
 import styles from '../../assets/css/SettingsPage.module.scss'
+import { getSavedTheme, saveTheme, type Theme } from '../../utils/theme'
 
 type TabKey = 'account' | 'appearance' | 'logout'
+
+const THEME_OPTIONS: { value: Theme; icon: string; label: string }[] = [
+  { value: 'light', icon: 'fa-regular fa-sun', label: 'Sáng' },
+  { value: 'dark', icon: 'fa-regular fa-moon', label: 'Tối' },
+]
 
 const TABS: { key: TabKey; icon: string; label: string }[] = [
   { key: 'account', icon: 'fa-regular fa-user', label: 'Thông tin tài khoản' },
@@ -12,6 +18,12 @@ const TABS: { key: TabKey; icon: string; label: string }[] = [
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<TabKey>('account')
+  const [theme, setTheme] = useState<Theme>(getSavedTheme)
+
+  const handleThemeChange = (value: Theme) => {
+    setTheme(value)
+    saveTheme(value)
+  }
 
   return (
     <>
@@ -96,19 +108,17 @@ export default function SettingsPage() {
               <h2 className={styles.cardTitle}>Giao diện</h2>
               <p className={styles.description}>Chọn chế độ hiển thị cho Loza</p>
 
-              <div className={styles.themeOptions}>
-                <button type="button" className={`${styles.themeOption} ${styles.themeOptionActive}`}>
-                  <span className={styles.themePreview}>
-                    <i className="fa-regular fa-sun" aria-hidden="true" />
-                  </span>
-                  <span>Sáng</span>
+              <div className={styles.themeOptions} role="radiogroup" aria-label="Chế độ giao diện">
+                {THEME_OPTIONS.map((option) => (
+                <button key={option.value} type="button" role="radio" aria-checked={theme === option.value}
+                    className={`${styles.themeOption} ${theme === option.value ? styles.themeOptionActive : ''}`}
+                    onClick={() => handleThemeChange(option.value)}>
+                    <span className={`${styles.themePreview} ${option.value === 'dark' ? styles.themePreviewDark : ''}`}>
+                      <i className={option.icon} aria-hidden="true" />
+                    </span>
+                    <span>{option.label}</span>
                 </button>
-                <button type="button" className={styles.themeOption}>
-                  <span className={`${styles.themePreview} ${styles.themePreviewDark}`}>
-                    <i className="fa-regular fa-moon" aria-hidden="true" />
-                  </span>
-                  <span>Tối</span>
-                </button>
+                ))}
               </div>
             </section>
           )}

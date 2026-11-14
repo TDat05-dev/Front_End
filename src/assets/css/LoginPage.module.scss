@@ -45,9 +45,9 @@
 .card {
   width: 400px;
   overflow: hidden;
-  background: $color-white;
+  background: $color-bg;
   border-radius: 8px;
-  box-shadow: 0 8px 24px rgba(0, 58, 140, 0.12);
+  box-shadow: $shadow-card;
 
   @include mobile {
     width: auto;
@@ -72,7 +72,7 @@
   align-items: center;
   gap: 12px;
   height: 46px;
-  border-bottom: 1px solid #d6dbe1;
+  border-bottom: 1px solid $color-input-border;
   transition: border-color 0.2s ease;
 
   // Khi ô input bên trong được focus → đổi màu viền và icon
@@ -182,8 +182,13 @@
 // ---------- Footer ----------
 .footer {
   padding: 16px;
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid $color-border;
   font-size: 14px;
   text-align: center;
   color: $color-text-muted;
+}
+:global(html[data-theme='dark']) .logoImage {
+  padding: 8px;
+  border-radius: 16px;
+  background: #f3f5f7;
 }

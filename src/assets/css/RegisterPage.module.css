@@ -37,9 +37,9 @@
 .card {
   width: 400px;
   overflow: hidden;
-  background: #fff;
+  background: var(--color-bg);
   border-radius: 8px;
-  box-shadow: 0 8px 24px rgba(0, 58, 140, 0.12);
+  box-shadow: var(--shadow-card);
 }
 @media (max-width: 480px) {
   .card {
@@ -51,11 +51,11 @@
 .cardHeader {
   margin: 0;
   padding: 16px 24px;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--color-border);
   font-size: 15px;
   font-weight: 600;
   text-align: center;
-  color: #081c36;
+  color: var(--color-text);
 }
 
 .form {
@@ -75,7 +75,7 @@
   align-items: center;
   gap: 12px;
   height: 46px;
-  border-bottom: 1px solid #d6dbe1;
+  border-bottom: 1px solid var(--color-input-border);
   transition: border-color 0.2s ease;
 }
 .control:focus-within {
@@ -91,7 +91,7 @@
   justify-content: center;
   width: 20px;
   font-size: 17px;
-  color: #7589a3;
+  color: var(--color-icon);
   transition: color 0.2s ease;
 }
 
@@ -107,7 +107,7 @@
   border-radius: 14px;
   background: transparent;
   font-size: 16px;
-  color: #7589a3;
+  color: var(--color-icon);
   cursor: pointer;
 }
 .toggle:hover {
@@ -120,10 +120,10 @@
 .prefix {
   flex-shrink: 0;
   padding-right: 12px;
-  border-right: 1px solid #d6dbe1;
+  border-right: 1px solid var(--color-input-border);
   font-size: 15px;
   line-height: 20px;
-  color: #081c36;
+  color: var(--color-text);
 }
 
 .input {
@@ -135,10 +135,10 @@
   outline: none;
   background: transparent;
   font-size: 15px;
-  color: #081c36;
+  color: var(--color-text);
 }
 .input::placeholder {
-  color: #9aa5b4;
+  color: var(--color-placeholder);
 }
 
 .terms {
@@ -148,7 +148,7 @@
   margin-top: 4px;
   font-size: 13px;
   line-height: 20px;
-  color: #555;
+  color: var(--color-text-muted);
   cursor: pointer;
 }
 .terms input {
@@ -192,10 +192,16 @@
 
 .footer {
   padding: 16px;
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid var(--color-border);
   font-size: 14px;
   text-align: center;
-  color: #555;
+  color: var(--color-text-muted);
+}
+
+:global(html[data-theme='dark']) .logoImage {
+  padding: 8px;
+  border-radius: 16px;
+  background: #f3f5f7;
 }
 
 /*# sourceMappingURL=RegisterPage.module.css.map */

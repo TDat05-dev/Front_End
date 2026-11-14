@@ -2,16 +2,16 @@
 @use 'mixins' as *;
 
 $navbar-width: 64px;
-$border: #e5e7eb;
-$bg-gray: #f3f5f7;
-$bg-hover: #f1f3f5;
+$border: $color-border;
+$bg-gray: $color-surface;
+$bg-hover: $color-hover;
 
 .page {
   display: flex;
   flex-direction: column;
   height: 100vh;
   margin-left: $navbar-width;
-  background: $color-white;
+  background: $color-bg;
 }
 
 .header {
@@ -51,7 +51,7 @@ $bg-hover: #f1f3f5;
   padding: 0 14px;
   border: none;
   border-radius: 16px;
-  background: #e4e8ec;
+  background: $color-input-bg;
   font-size: 14px;
   font-weight: 500;
   color: $color-text;
@@ -59,7 +59,7 @@ $bg-hover: #f1f3f5;
   transition: background-color 0.2s ease;
 
   &:hover {
-    background: #d8dde3;
+    background: $color-input-bg-hover;
   }
 
   &:focus-visible {
@@ -77,7 +77,7 @@ $bg-hover: #f1f3f5;
 .panel {
   padding-bottom: 8px;
   border-radius: 8px;
-  background: $color-white;
+  background: $color-bg;
 }
 
 .toolbar {
@@ -97,7 +97,7 @@ $bg-hover: #f1f3f5;
   gap: 8px;
   height: 34px;
   padding: 0 10px;
-  border: 1px solid #d6dbe1;
+  border: 1px solid $color-input-border;
   border-radius: 6px;
   font-size: 13px;
   color: $color-icon;
@@ -144,7 +144,7 @@ $bg-hover: #f1f3f5;
   gap: 12px;
   margin: 0 16px 8px;
   padding: 12px 16px;
-  border: 1px dashed #c9d3df;
+  border: 1px dashed $color-input-border;
   border-radius: 8px;
 }
 

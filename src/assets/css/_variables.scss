@@ -8,7 +8,18 @@ $color-primary-hover: #0054cc;
 $color-white: #fff;
 
 // ---------- Màu chữ ----------
-$color-text: #081c36;
-$color-text-muted: #555;
-$color-placeholder: #9aa5b4;
-$color-icon: #7589a3;
+$color-text: var(--color-text);
+$color-text-muted: var(--color-text-muted);
+$color-placeholder: var(--color-placeholder);
+$color-icon: var(--color-icon);
+
+// ---------- Nền & viền ----------
+$color-bg: var(--color-bg);
+$color-surface: var(--color-surface);
+$color-hover: var(--color-hover);
+$color-active: var(--color-active);
+$color-border: var(--color-border);
+$color-input-border: var(--color-input-border);
+$color-input-bg: var(--color-input-bg);
+$color-input-bg-hover: var(--color-input-bg-hover);
+$shadow-card: var(--shadow-card);
