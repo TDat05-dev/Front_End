@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import NavBar from '../../components/NavBar'
 import styles from '../../assets/css/SettingsPage.module.scss'
-import { getSavedTheme, saveTheme, type Theme } from '../../utils/theme'
+import { useTheme } from '../../hooks/useTheme'
+import type { Theme } from '../../utils/theme'
 
 type TabKey = 'account' | 'appearance' | 'logout'
 
@@ -18,12 +19,7 @@ const TABS: { key: TabKey; icon: string; label: string }[] = [
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<TabKey>('account')
-  const [theme, setTheme] = useState<Theme>(getSavedTheme)
-
-  const handleThemeChange = (value: Theme) => {
-    setTheme(value)
-    saveTheme(value)
-  }
+  const { theme, setTheme } = useTheme()
 
   return (
     <>
@@ -112,7 +108,7 @@ export default function SettingsPage() {
                 {THEME_OPTIONS.map((option) => (
                 <button key={option.value} type="button" role="radio" aria-checked={theme === option.value}
                     className={`${styles.themeOption} ${theme === option.value ? styles.themeOptionActive : ''}`}
-                    onClick={() => handleThemeChange(option.value)}>
+                    onClick={() => setTheme(option.value)}>
                     <span className={`${styles.themePreview} ${option.value === 'dark' ? styles.themePreviewDark : ''}`}>
                       <i className={option.icon} aria-hidden="true" />
                     </span>
