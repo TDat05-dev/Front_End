@@ -1,0 +1,72 @@
+.banner {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: calc(100% - 32px);
+  padding: 8px 14px;
+  border-radius: 8px;
+  box-shadow: var(--shadow-card);
+  font-size: 14px;
+  font-weight: 500;
+  transform: translateX(-50%);
+  animation: slide-down 0.2s ease;
+}
+@media (max-width: 480px) {
+  .banner {
+    flex-wrap: wrap;
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+.warning {
+  background: #fff4e5;
+  color: #8a4b00;
+}
+
+.offline {
+  background: #fdecea;
+  color: #b42318;
+}
+
+.success {
+  background: #e7f6ec;
+  color: #067647;
+}
+
+.retry {
+  flex-shrink: 0;
+  height: 28px;
+  padding: 0 12px;
+  border: none;
+  border-radius: 6px;
+  background: #0068ff;
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+}
+.retry:hover {
+  background: #0054cc;
+}
+.retry:focus-visible {
+  outline: 2px solid #0068ff;
+  outline-offset: 2px;
+}
+
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%);
+  }
+}
+
+/*# sourceMappingURL=ConnectionBanner.module.css.map */
