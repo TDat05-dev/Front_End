@@ -1,12 +1,55 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useState, type FormEvent } from 'react'
+import { Link, Navigate, useNavigate } from 'react-router-dom'
+import { auth } from '../../auth/auth'
+import { request } from '../../services/socket'
 import styles from '../../assets/css/RegisterPage.module.scss'
 import logo from '../../assets/img/loza-logo.png'
 
 const APP_NAME = 'Loza'
 
+const USERNAME_PATTERN = /^[A-Za-z0-9_]+$/
+
 export default function RegisterPage() {
+  const navigate = useNavigate()
+  const [user, setUser] = useState('')
+  const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  if (auth.isAuthenticated) {
+    return <Navigate to="/chats" replace />
+  }
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault()
+    if (loading) return
+
+    const username = user.trim()
+    if (!username || !password) {
+      setError('Vui lòng nhập tên người dùng và mật khẩu')
+      return
+    }
+    if (!USERNAME_PATTERN.test(username)) {
+      setError('Tên người dùng chỉ gồm chữ cái, số và dấu gạch dưới')
+      return
+    }
+
+    setLoading(true)
+    setError(null)
+
+    request('REGISTER', { user: username, pass: password })
+      .then((res) => {
+        if (res.status !== 'success') {
+          throw new Error(res.mes || 'Đăng ký thất bại')
+        }
+        navigate('/login', { replace: true })
+      })
+      .catch((err: Error) => {
+        setError(err.message)
+        setLoading(false)
+      })
+  }
 
   return (
     <main className={styles.page}>
@@ -24,15 +67,15 @@ export default function RegisterPage() {
           Đăng ký tài khoản
         </h2>
 
-        <form className={styles.form}>
+        <form className={styles.form} onSubmit={handleSubmit} noValidate>
           <div className={styles.control}>
             <span className={styles.icon}><i className="fa-regular fa-user" aria-hidden="true" /></span>
-              <input className={styles.input} name="user" type="text" placeholder="Tên người dùng" aria-label="Tên người dùng" autoComplete="username" pattern="[A-Za-z0-9_]+" title="Chỉ gồm chữ cái, số và dấu gạch dưới" required />
+              <input className={styles.input} name="user" type="text" placeholder="Tên người dùng" aria-label="Tên người dùng" autoComplete="username" value={user} onChange={(e) => { setUser(e.target.value); setError(null) }} disabled={loading} />
           </div>
 
           <div className={styles.control}>
             <span className={styles.icon}><i className="fa-solid fa-lock" aria-hidden="true" /></span>
-            <input className={styles.input} name="password" type={showPassword ? 'text' : 'password'} placeholder="Mật khẩu" aria-label="Mật khẩu" autoComplete="new-password" required />
+            <input className={styles.input} name="password" type={showPassword ? 'text' : 'password'} placeholder="Mật khẩu" aria-label="Mật khẩu" autoComplete="new-password" value={password} onChange={(e) => { setPassword(e.target.value); setError(null) }} disabled={loading} />
             <button
                 type="button"
                 className={styles.toggle}
@@ -45,11 +88,11 @@ export default function RegisterPage() {
 
           <div className={styles.control}>
             <span className={styles.icon}><i className="fa-solid fa-lock" aria-hidden="true" /></span>
-            <input className={styles.input} name="confirmPassword" type={showPassword ? 'text' : 'password'} placeholder="Nhập lại mật khẩu" aria-label="Nhập lại mật khẩu" autoComplete="new-password" required />
+            <input className={styles.input} name="confirmPassword" type={showPassword ? 'text' : 'password'} placeholder="Nhập lại mật khẩu" aria-label="Nhập lại mật khẩu" autoComplete="new-password" disabled={loading} />
           </div>
 
           <label className={styles.terms}>
-            <input type="checkbox" name="acceptTerms" />
+            <input type="checkbox" name="acceptTerms" disabled={loading} />
             <span>
               Tôi đồng ý với{' '}
               <a className={styles.link} href="/terms" target="_blank" rel="noopener noreferrer">
@@ -59,8 +102,9 @@ export default function RegisterPage() {
             </span>
           </label>
 
-          <button type="button" className={styles.submit}>
-            Đăng ký
+          {error && <p className={styles.error} role="alert">{error}</p>}
+          <button type="submit" className={styles.submit} disabled={loading}>
+            {loading ? 'Đang đăng ký...' : 'Đăng ký'}
           </button>
         </form>
 
