@@ -5,6 +5,26 @@
 // ============================================================
 
 :root {
+  --color-text: #081c36;
+  --color-text-muted: #555;
+  --color-placeholder: #9aa5b4;
+  --color-icon: #7589a3;
+
+  --color-bg: #fff;
+  --color-surface: #f3f5f7;
+  --color-hover: #f1f3f5;
+  --color-active: #e5efff;
+  --color-border: #e5e7eb;
+  --color-input-border: #d6dbe1;
+  --color-input-bg: #eaedf0;
+  --color-input-bg-hover: #d8dde3;
+  --color-bubble: #fff;
+  --color-bubble-mine: #dbeafe;
+  --shadow-card: 0 8px 24px rgba(0, 58, 140, 0.12);
+
+  --page-bg-top: #e8f3ff;
+  --page-bg-bottom: #cde3ff;
+
   font-family: system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   color: $color-text;
   color-scheme: light;
@@ -12,6 +32,30 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+html[data-theme='dark'] {
+  --color-text: #e6e9ef;
+  --color-text-muted: #a0a8b8;
+  --color-placeholder: #6b7486;
+  --color-icon: #8c96a8;
+
+  --color-bg: #16181d;
+  --color-surface: #1f2229;
+  --color-hover: #262a33;
+  --color-active: #1d3357;
+  --color-border: #2c313a;
+  --color-input-border: #3a404b;
+  --color-input-bg: #262a33;
+  --color-input-bg-hover: #303541;
+  --color-bubble: #262a33;
+  --color-bubble-mine: #1d3a66;
+  --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.4);
+
+  --page-bg-top: #0f1115;
+  --page-bg-bottom: #1a1d24;
+
+  color-scheme: dark; // thanh cuộn, ô date/select của trình duyệt cũng chuyển tối
 }
 
 *,
@@ -22,7 +66,7 @@
 
 body {
   margin: 0;
-  background: linear-gradient(#e8f3ff, #cde3ff) fixed;
+  background: linear-gradient(var(--page-bg-top), var(--page-bg-bottom)) fixed;
 }
 
 button,

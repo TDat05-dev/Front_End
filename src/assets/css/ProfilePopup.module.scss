@@ -1,7 +1,7 @@
 @use 'variables' as *;
 @use 'mixins' as *;
-$border: #e5e7eb;
-$bg-hover: #f1f3f5;
+$border: $color-border;
+$bg-hover: $color-hover;
 .overlay {
   position: fixed;
   inset: 0;
@@ -21,7 +21,7 @@ $bg-hover: #f1f3f5;
   overflow: hidden;
   border: 1px solid $border;
   border-radius: 12px;
-  background: $color-white;
+  background: $color-bg;
   box-shadow: 0 8px 32px rgba(8, 28, 54, 0.15);
 }
 .header {
