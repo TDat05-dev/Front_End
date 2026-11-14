@@ -166,6 +166,12 @@
   text-decoration: underline;
 }
 
+.error {
+  margin: 0;
+  font-size: 14px;
+  color: #e53935;
+}
+
 .submit {
   display: flex;
   align-items: center;
@@ -184,6 +190,10 @@
 }
 .submit:hover:not(:disabled) {
   background: #0054cc;
+}
+.submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 .submit:focus-visible {
   outline: 2px solid #0068ff;

@@ -91,6 +91,17 @@ function getErrorMessage(error: unknown) {
   return error instanceof Error ? error.message : 'Đã xảy ra lỗi'
 }
 
+let historyQueue: Promise<void> = Promise.resolve()
+function requestHistory(event: string, name: string) {
+  const result = historyQueue.then(() => request<unknown>(event, {
+    name,
+    page: 1,
+  }),
+  )
+  historyQueue = result.then(() => undefined, () => undefined)
+  return result
+}
+
 export default function ChatPage() {
   const [contacts, setContacts] = useState<Contact[]>([])
   const [selected, setSelected] = useState<Contact | null>(null)
@@ -118,7 +129,10 @@ export default function ChatPage() {
       const message = parseMessage(response.data)
       const me = auth.user
       if (!message || !me) return
-      const contactName = message.type === 1 ? message.to : message.name === me ? message.to : message.name
+      if (message.type !== 0) return
+      if (message.name !== me && message.to !== me) return
+      if (message.name === me && message.to === me) return
+      const contactName = message.name === me ? message.to : message.name
       const contact: Contact = {
         name: contactName,
         type: message.type,
@@ -198,54 +212,114 @@ export default function ChatPage() {
       block: 'end',
     })
   }, [messages])
+
   async function loadContacts(
       isIgnored: () => boolean = () => !mountedRef.current,
   ) {
+    const me = auth.user
+
+    if (!me) {
+      setContacts([])
+      setLoadingList(false)
+      return
+    }
+
     setLoadingList(true)
     setListError(null)
+
     try {
       const response = await request<unknown>('GET_USER_LIST')
-      if (isIgnored()) return
       if (response.status !== 'success') {
         throw new Error(
             response.mes || 'Không tải được danh sách hội thoại',
         )
       }
       if (!Array.isArray(response.data)) {
-        throw new Error(
-            'Danh sách hội thoại không đúng định dạng',
-        )
+        throw new Error('Danh sách hội thoại không đúng định dạng')
       }
-      const list: Contact[] = []
+      const candidates: Contact[] = []
       for (const item of response.data) {
-        if (!isRecord(item)) continue
-        const type = Number(item.type)
         if (
+            !isRecord(item) ||
+            Number(item.type) !== 0 ||
             typeof item.name !== 'string' ||
             !item.name.trim() ||
-            (type !== 0 && type !== 1)
+            item.name === me
         ) {
           continue
         }
-        const contact: Contact = {
-          name: item.name,
-          type,
-          actionTime:
-              typeof item.actionTime === 'string' ? item.actionTime : ''
+        if (candidates.some((contact) => contact.name === item.name)) {
+          continue
         }
-        const exists = list.some(
-            (existing) =>
-                conversationKey(existing) === conversationKey(contact),
-        )
-        if (!exists) list.push(contact)
+        candidates.push({
+          name: item.name,
+          type: 0,
+          actionTime: '',
+        })
       }
-      list.sort((a, b) =>
+
+      const verified: Contact[] = []
+
+      for (const contact of candidates) {
+        if (isIgnored() || auth.user !== me) return
+
+        const historyResponse = await requestHistory(
+            'GET_PEOPLE_CHAT_MES',
+            contact.name,
+        )
+
+        if (isIgnored() || auth.user !== me) return
+
+        if (historyResponse.status !== 'success') {
+          throw new Error(
+              historyResponse.mes ||
+              `Không kiểm tra được lịch sử với ${contact.name}`,
+          )
+        }
+
+        if (!Array.isArray(historyResponse.data)) {
+          throw new Error(
+              `Lịch sử với ${contact.name} không đúng định dạng`,
+          )
+        }
+
+        const personalMessages = historyResponse.data
+            .map(parseMessage)
+            .filter((message): message is Message =>
+                message !== null && belongsTo(message, contact, me),
+            )
+
+        if (personalMessages.length === 0) continue
+
+        const lastMessageTime = personalMessages.reduce(
+            (latest, message) => {
+              const time = message.createAt ?? ''
+              return time > latest ? time : latest
+            },
+            '',
+        )
+        verified.push({
+          ...contact,
+          actionTime: lastMessageTime,
+        })
+      }
+      if (isIgnored() || auth.user !== me) return
+      verified.sort((a, b) =>
           b.actionTime.localeCompare(a.actionTime),
       )
-      setContacts(list)
+      setContacts((previous) => {
+        const recent = previous.filter(
+            (contact) =>
+                contact.type === 0 &&
+                !verified.some((item) => item.name === contact.name),
+        )
+        return [...recent, ...verified]
+      })
     } catch (error: unknown) {
-      if (!isIgnored()) {
-        setListError(getErrorMessage(error))
+      if (!isIgnored() && auth.user === me) {
+        setListError(
+            `Chưa thể xác minh danh sách hội thoại: ${getErrorMessage(error)}`,
+        )
       }
     } finally {
       if (!isIgnored()) {
@@ -273,10 +347,7 @@ export default function ChatPage() {
     try {
       const event = contact.type === 1 ? 'GET_ROOM_CHAT_MES' : 'GET_PEOPLE_CHAT_MES'
 
-      const response = await request<unknown>(event, {
-        name: contact.name,
-        page: 1,
-      })
+      const response = await requestHistory(event, contact.name)
 
       if (!mountedRef.current) return
 
