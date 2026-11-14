@@ -17,7 +17,7 @@
   --page-bg-top: #e8f3ff;
   --page-bg-bottom: #cde3ff;
   font-family: system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  color: #081c36;
+  color: var(--color-text);
   color-scheme: light;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
