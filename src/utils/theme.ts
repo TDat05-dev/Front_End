@@ -15,12 +15,7 @@ export function getSavedTheme(): Theme {
   return 'light'
 }
 
-export function applyTheme(theme: Theme): void {
-  document.documentElement.dataset.theme = theme
-}
-
 export function saveTheme(theme: Theme): void {
-  applyTheme(theme)
   try {
     localStorage.setItem(STORAGE_KEY, theme)
   } catch {
