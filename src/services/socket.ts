@@ -79,6 +79,7 @@ export function connect() {
     } catch {
       return
     }
+    if (import.meta.env.DEV) console.log('[socket]', res)
     updateAuth(res)
     listeners.get(res.event)?.forEach((listener) => listener(res))
   }
