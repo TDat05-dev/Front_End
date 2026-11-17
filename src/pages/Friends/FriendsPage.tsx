@@ -2,6 +2,9 @@ import { useState } from 'react'
 import NavBar from '../../components/NavBar'
 import styles from '../../assets/css/FriendsPage.module.scss'
 import { useSocket } from '../../hooks/useSocket'
+import UserSearchPopup from '../../components/UserSearchPopup'
+import { auth } from '../../auth/auth'
+import { getAddedContacts } from '../../data/addedContacts'
 import type { Contact, ContactType } from '../../data/contacts'
 
 type SortOrder = 'asc' | 'desc'
@@ -40,7 +43,14 @@ export default function FriendsPage() {
   const [tab, setTab] = useState<TabKey>('all')
   const { data, loading, error } = useSocket<Contact[]>('GET_USER_LIST')
 
-  const contacts: Contact[] = (data ?? []).map((c) => ({ ...c, type: Number(c.type) as ContactType }))
+  const [showSearch, setShowSearch] = useState(false)
+  const [added, setAdded] = useState(() => getAddedContacts(auth.user ?? ''))
+
+  const serverContacts: Contact[] = (data ?? []).map((c) => ({ ...c, type: Number(c.type) as ContactType }))
+  const contacts: Contact[] = [
+    ...serverContacts,
+    ...added.filter((a) => !serverContacts.some((c) => c.type === 0 && c.name === a.name)),
+  ]
 
   const query = keyword.trim()
   const peopleCount = contacts.filter((c) => c.type === 0).length
@@ -74,6 +84,10 @@ export default function FriendsPage() {
           <header className={styles.header}>
             <i className="fa-solid fa-address-book" aria-hidden="true" />
             <h1>Danh bạ</h1>
+            <button type="button" className={styles.searchUserButton} onClick={() => setShowSearch(true)}>
+              <i className="fa-solid fa-user-plus" aria-hidden="true" />
+              <span>Tìm người dùng</span>
+            </button>
           </header>
 
           <div className={styles.body}>
@@ -118,21 +132,10 @@ export default function FriendsPage() {
                 </label>
               </div>
 
-              {query && tab !== 1 && (
-                  <div className={styles.lookup}>
-                <span className={styles.lookupText}>
-                  Tìm tài khoản <strong>{query}</strong> trên Loza
-                </span>
-                    <button type="button" className={styles.primaryButton}>
-                      <i className="fa-solid fa-magnifying-glass" aria-hidden="true" /> Tìm
-                    </button>
-                  </div>
-              )}
-
               {loading && <p className={styles.empty}>Đang tải danh bạ...</p>}
               {error && <p className={styles.empty}>{error}</p>}
 
-              {!loading && !error && sections.length === 0 && !(query && tab !== 1) && (
+              {!loading && !error && sections.length === 0 && (
                   <p className={styles.empty}>{query ? 'Không có kết quả phù hợp' : 'Danh bạ trống'}</p>
               )}
 
@@ -155,6 +158,14 @@ export default function FriendsPage() {
             </section>
           </div>
         </div>
+        {showSearch && (
+            <UserSearchPopup
+                contacts={serverContacts}
+                loading={loading}
+                onClose={() => setShowSearch(false)}
+                onAdded={() => setAdded(getAddedContacts(auth.user ?? ''))}
+            />
+        )}
       </>
   )
 }
