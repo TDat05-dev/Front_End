@@ -3,6 +3,7 @@ import NavBar from '../../components/NavBar'
 import { auth } from '../../auth/auth'
 import {on, request, send,} from '../../services/socket'
 import type { Contact } from '../../data/contacts'
+import { getAddedContacts } from '../../data/addedContacts'
 import styles from '../../assets/css/ChatPage.module.scss'
 
 type Message = {
@@ -94,9 +95,9 @@ function getErrorMessage(error: unknown) {
 let historyQueue: Promise<void> = Promise.resolve()
 function requestHistory(event: string, name: string) {
   const result = historyQueue.then(() => request<unknown>(event, {
-    name,
-    page: 1,
-  }),
+        name,
+        page: 1,
+      }),
   )
   historyQueue = result.then(() => undefined, () => undefined)
   return result
@@ -307,13 +308,15 @@ export default function ChatPage() {
       verified.sort((a, b) =>
           b.actionTime.localeCompare(a.actionTime),
       )
+      const added = getAddedContacts(me).filter((contact) => !verified.some((item) => item.name === contact.name))
       setContacts((previous) => {
         const recent = previous.filter(
             (contact) =>
                 contact.type === 0 &&
-                !verified.some((item) => item.name === contact.name),
+                !verified.some((item) => item.name === contact.name) &&
+                !added.some((item) => item.name === contact.name),
         )
-        return [...recent, ...verified]
+        return [...recent, ...added, ...verified]
       })
     } catch (error: unknown) {
       if (!isIgnored() && auth.user === me) {
@@ -405,6 +408,29 @@ export default function ChatPage() {
       }
     }
   }
+  function confirmSent(contact: Contact, localKey: string, text: string) {
+    const event = contact.type === 1 ? 'GET_ROOM_CHAT_MES' : 'GET_PEOPLE_CHAT_MES'
+    setTimeout(() => {
+      requestHistory(event, contact.name)
+        .then((response) => {
+          if (!mountedRef.current || response.status !== 'success') return
+          const raw = contact.type === 1 && isRecord(response.data) ? response.data.chatMess : response.data
+          if (!Array.isArray(raw)) return
+          const sent = raw
+            .map(parseMessage)
+            .filter((message): message is Message =>
+              message !== null && message.name === currentUser && message.mes === text && belongsTo(message, contact, currentUser),
+            )
+          setMessages((previous) => {
+            const saved = sent.find((message) => !previous.some((item) => item.id === message.id))
+            if (!saved) return previous
+            return previous.map((item) => (item.localKey === localKey && item.pending ? { ...saved, localKey } : item))
+          })
+        })
+        .catch(() => undefined)
+    }, 800)
+  }
+
   function handleSend(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     const text = draft.trim()
@@ -431,10 +457,11 @@ export default function ChatPage() {
       )
       return
     }
+    const localKey = crypto.randomUUID()
     setMessages((previous) => [
       ...previous,
       {
-        localKey: crypto.randomUUID(),
+        localKey,
         pending: true,
         name: auth.user!,
         to: contact.name,
@@ -450,6 +477,7 @@ export default function ChatPage() {
       ),
     ])
     setDraft('')
+    confirmSent(contact, localKey, text)
   }
   const filteredContacts = contacts.filter((contact) =>
       normalize(contact.name).includes(
