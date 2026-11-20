@@ -237,6 +237,39 @@ $active: $color-active;
 
 
 
+.counter {
+  align-self: flex-end;
+  font-size: 12px;
+  color: $color-text-muted;
+}
+
+.note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 16px;
+  font-size: 13px;
+  color: $color-text-muted;
+}
+
+.success,
+.error {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.success {
+  background: rgba(18, 183, 106, 0.12);
+  color: #12b76a;
+}
+
+.error {
+  background: rgba(229, 57, 53, 0.12);
+  color: #e53935;
+}
+
 // ---------- Nút ----------
 .actions {
   display: flex;

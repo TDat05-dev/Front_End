@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import NavBar from '../../components/NavBar'
+import AccountSection from './AccountSection'
 import styles from '../../assets/css/SettingsPage.module.scss'
 import { useTheme } from '../../hooks/useTheme'
 import type { Theme } from '../../utils/theme'
@@ -48,56 +49,7 @@ export default function SettingsPage() {
         </aside>
 
         <main className={styles.content}>
-          {activeTab === 'account' && (
-            <section className={styles.card}>
-              <h2 className={styles.cardTitle}>Thông tin tài khoản</h2>
-
-              <div className={styles.avatarRow}>
-                <span className={styles.avatar}>NA</span>
-                <div>
-                  <button type="button" className={styles.secondaryButton}>
-                    <i className="fa-solid fa-camera" aria-hidden="true" /> Đổi ảnh đại diện
-                  </button>
-                  <p className={styles.hint}>JPG, PNG hoặc WEBP, tối đa 2MB</p>
-                </div>
-              </div>
-
-              <label className={styles.field}>
-                <span className={styles.label}>Tên đăng nhập</span>
-                <input className={styles.input} defaultValue="nguyenvana" disabled />
-              </label>
-
-              <label className={styles.field}>
-                <span className={styles.label}>Tên hiển thị</span>
-                <input className={styles.input} name="displayName" defaultValue="Nguyễn Văn A" />
-              </label>
-
-              <div className={styles.fieldRow}>
-                <label className={styles.field}>
-                  <span className={styles.label}>Ngày sinh</span>
-                  <input className={styles.input} type="date" name="birthday" defaultValue="2005-01-01" />
-                </label>
-
-                <label className={styles.field}>
-                  <span className={styles.label}>Giới tính</span>
-                  <select className={styles.input} name="gender" defaultValue="male">
-                    <option value="male">Nam</option>
-                    <option value="female">Nữ</option>
-                    <option value="other">Khác</option>
-                  </select>
-                </label>
-              </div>
-
-              <label className={styles.field}>
-                <span className={styles.label}>Giới thiệu bản thân</span>
-                <textarea className={`${styles.input} ${styles.textarea}`} name="bio" placeholder="Viết vài dòng về bạn..." />
-              </label>
-
-              <div className={styles.actions}>
-                <button type="button" className={styles.primaryButton}>Lưu thay đổi</button>
-              </div>
-            </section>
-          )}
+          {activeTab === 'account' && <AccountSection />}
 
           {activeTab === 'appearance' && (
             <section className={styles.card}>
