@@ -114,11 +114,40 @@ export default function ChatPage() {
   const [listError, setListError] = useState<string | null>(null)
   const [chatError, setChatError] = useState<string | null>(null)
   const [notice, setNotice] = useState<string | null>(null)
+  const [unreadCounts, setUnreadCounts] = useState<Record<string, number>>({})
+  const readableConversationRef = useRef<string | null>(null)
+  const receivedIdsRef = useRef(new Set<string>())
   const selectedRef = useRef<Contact | null>(null)
   const historyBusyRef = useRef(false)
   const mountedRef = useRef(false)
   const endRef = useRef<HTMLDivElement>(null)
   const currentUser = auth.user ?? ''
+
+  function clearUnread(key: string) {
+    setUnreadCounts((previous) => {
+      if (!previous[key]) return previous
+      const next = { ...previous }
+      delete next[key]
+      return next
+    })
+  }
+
+  useEffect(() => {
+    function markVisibleConversationRead() {
+      if (document.visibilityState !== 'visible' || !document.hasFocus()) return
+      const key = readableConversationRef.current
+      if (key) clearUnread(key)
+    }
+
+    document.addEventListener('visibilitychange', markVisibleConversationRead)
+    window.addEventListener('focus', markVisibleConversationRead)
+
+    return () => {
+      document.removeEventListener('visibilitychange', markVisibleConversationRead)
+      window.removeEventListener('focus', markVisibleConversationRead)
+    }
+  }, [])
+
   useEffect(() => {
     mountedRef.current = true
     const offMessage = on('SEND_CHAT', (response) => {
@@ -139,6 +168,28 @@ export default function ChatPage() {
         type: message.type,
         actionTime: message.createAt ?? '',
       }
+      const key = conversationKey(contact)
+      if (message.id !== undefined) {
+        const messageKey = `${key}:${message.id}`
+        const receivedIds = receivedIdsRef.current
+        if (receivedIds.has(messageKey)) return
+        receivedIds.add(messageKey)
+        if (receivedIds.size > 2000) {
+          const oldest = receivedIds.values().next().value
+          if (oldest !== undefined) receivedIds.delete(oldest)
+        }
+      }
+
+      const isReading = readableConversationRef.current === key &&
+          document.visibilityState === 'visible' && document.hasFocus()
+
+      if (message.name !== me && !isReading) {
+        setUnreadCounts((previous) => ({
+          ...previous,
+          [key]: (previous[key] ?? 0) + 1,
+        }))
+      }
+
       setContacts((previous) => [
         contact,
         ...previous.filter(
@@ -333,6 +384,7 @@ export default function ChatPage() {
   async function openConversation(contact: Contact) {
     if (historyBusyRef.current) return
     historyBusyRef.current = true
+    readableConversationRef.current = null
 
     const sameConversation = selectedRef.current !== null && conversationKey(selectedRef.current) === conversationKey(contact)
 
@@ -381,6 +433,12 @@ export default function ChatPage() {
               (a.createAt ?? '').localeCompare(b.createAt ?? '') || (a.id ?? 0) - (b.id ?? 0),
           )
           .map(toDisplay)
+
+      const key = conversationKey(contact)
+      readableConversationRef.current = key
+      if (document.visibilityState === 'visible' && document.hasFocus()) {
+        clearUnread(key)
+      }
 
       setMessages((previous) => {
         if (sameConversation) {
@@ -518,10 +576,12 @@ export default function ChatPage() {
                       </p>
                   )}
               {filteredContacts.map((contact) => {
+                const key = conversationKey(contact)
+                const unread = unreadCounts[key] ?? 0
                 const active = selected !== null &&
-                    conversationKey(selected) === conversationKey(contact)
+                    conversationKey(selected) === key
                 return (
-                    <button key={conversationKey(contact)} type="button" disabled={loadingHistory} className={`${styles.chatItem} ${active ? styles.chatItemActive : ''}`} onClick={() => void openConversation(contact)}>
+                    <button key={key} type="button" disabled={loadingHistory} className={`${styles.chatItem} ${active ? styles.chatItemActive : ''}`} onClick={() => void openConversation(contact)}>
                   <span className={styles.avatar}>
                     {contact.type === 1 ? (
                         <i className="fa-solid fa-users" aria-hidden="true"/>
@@ -530,13 +590,18 @@ export default function ChatPage() {
                     )}
                   </span>
                       <span className={styles.chatInfo}>
-                    <span className={styles.name}>
+                    <span className={`${styles.name} ${unread > 0 ? styles.unreadName : ''}`}>
                       {contact.name}
                     </span>
                     <span className={styles.lastMessage}>
                       {contact.type === 1 ? 'Phòng chat' : 'Chat cá nhân'}
                     </span>
                   </span>
+                      {unread > 0 && (
+                          <span className={styles.unreadBadge} aria-label={`${unread} tin nhắn chưa đọc`}>
+                            {unread > 99 ? '99+' : unread}
+                          </span>
+                      )}
                     </button>
                 )
               })}

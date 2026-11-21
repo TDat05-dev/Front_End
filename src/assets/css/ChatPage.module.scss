@@ -336,3 +336,23 @@ $bg-active: $color-active;
   opacity: 0.4;
   cursor: not-allowed;
 }
+
+.unreadBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: #e53935;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.unreadName {
+  font-weight: 700;
+}
