@@ -88,6 +88,17 @@ function toDisplay(message: Message): DisplayMessage {
   }
 }
 
+function latestMessage(messages: Message[]): Message | undefined {
+  return messages.reduce<Message | undefined>((latest, message) => {
+    if (!latest) return message
+    const timeOrder = (message.createAt ?? '').localeCompare(latest.createAt ?? '')
+    if (timeOrder > 0 || (timeOrder === 0 && (message.id ?? 0) > (latest.id ?? 0))) {
+      return message
+    }
+    return latest
+  }, undefined)
+}
+
 function getErrorMessage(error: unknown) {
   return error instanceof Error ? error.message : 'Đã xảy ra lỗi'
 }
@@ -108,6 +119,7 @@ export default function ChatPage() {
   const [selected, setSelected] = useState<Contact | null>(null)
   const [messages, setMessages] = useState<DisplayMessage[]>([])
   const [keyword, setKeyword] = useState('')
+  const [conversationFilter, setConversationFilter] = useState<'all' | 'unread'>('all')
   const [draft, setDraft] = useState('')
   const [loadingList, setLoadingList] = useState(true)
   const [loadingHistory, setLoadingHistory] = useState(false)
@@ -115,6 +127,8 @@ export default function ChatPage() {
   const [chatError, setChatError] = useState<string | null>(null)
   const [notice, setNotice] = useState<string | null>(null)
   const [unreadCounts, setUnreadCounts] = useState<Record<string, number>>({})
+  const [lastMessages, setLastMessages] = useState<Record<string, Message>>({})
+  const previewVersionsRef = useRef<Record<string, number>>({})
   const readableConversationRef = useRef<string | null>(null)
   const receivedIdsRef = useRef(new Set<string>())
   const selectedRef = useRef<Contact | null>(null)
@@ -122,6 +136,25 @@ export default function ChatPage() {
   const mountedRef = useRef(false)
   const endRef = useRef<HTMLDivElement>(null)
   const currentUser = auth.user ?? ''
+
+  function updateLivePreview(contact: Contact, message: Message) {
+    const key = conversationKey(contact)
+    previewVersionsRef.current[key] = (previewVersionsRef.current[key] ?? 0) + 1
+    setLastMessages((previous) => ({ ...previous, [key]: message }))
+  }
+
+  function updateHistoryPreview(contact: Contact, history: Message[], version: number) {
+    const key = conversationKey(contact)
+    if ((previewVersionsRef.current[key] ?? 0) !== version) return
+    const last = latestMessage(history)
+    setLastMessages((previous) => {
+      if (last) return { ...previous, [key]: last }
+      if (!previous[key]) return previous
+      const next = { ...previous }
+      delete next[key]
+      return next
+    })
+  }
 
   function clearUnread(key: string) {
     setUnreadCounts((previous) => {
@@ -190,6 +223,7 @@ export default function ChatPage() {
         }))
       }
 
+      updateLivePreview(contact, message)
       setContacts((previous) => [
         contact,
         ...previous.filter(
@@ -315,6 +349,7 @@ export default function ChatPage() {
       for (const contact of candidates) {
         if (isIgnored() || auth.user !== me) return
 
+        const previewVersion = previewVersionsRef.current[conversationKey(contact)] ?? 0
         const historyResponse = await requestHistory(
             'GET_PEOPLE_CHAT_MES',
             contact.name,
@@ -341,6 +376,7 @@ export default function ChatPage() {
                 message !== null && belongsTo(message, contact, me),
             )
 
+        updateHistoryPreview(contact, personalMessages, previewVersion)
         if (personalMessages.length === 0) continue
 
         const lastMessageTime = personalMessages.reduce(
@@ -402,6 +438,7 @@ export default function ChatPage() {
     try {
       const event = contact.type === 1 ? 'GET_ROOM_CHAT_MES' : 'GET_PEOPLE_CHAT_MES'
 
+      const previewVersion = previewVersionsRef.current[conversationKey(contact)] ?? 0
       const response = await requestHistory(event, contact.name)
 
       if (!mountedRef.current) return
@@ -434,6 +471,7 @@ export default function ChatPage() {
           )
           .map(toDisplay)
 
+      updateHistoryPreview(contact, history, previewVersion)
       const key = conversationKey(contact)
       readableConversationRef.current = key
       if (document.visibilityState === 'visible' && document.hasFocus()) {
@@ -516,6 +554,12 @@ export default function ChatPage() {
       return
     }
     const localKey = crypto.randomUUID()
+    updateLivePreview(contact, {
+      name: auth.user!,
+      to: contact.name,
+      mes: text,
+      type: contact.type,
+    })
     setMessages((previous) => [
       ...previous,
       {
@@ -537,11 +581,12 @@ export default function ChatPage() {
     setDraft('')
     confirmSent(contact, localKey, text)
   }
-  const filteredContacts = contacts.filter((contact) =>
-      normalize(contact.name).includes(
-          normalize(keyword.trim()),
-      ),
-  )
+  const filteredContacts = contacts.filter((contact) => {
+    const matchesKeyword = normalize(contact.name).includes(normalize(keyword.trim()))
+    const matchesFilter = conversationFilter === 'all' ||
+        (unreadCounts[conversationKey(contact)] ?? 0) > 0
+    return matchesKeyword && matchesFilter
+  })
   return (
       <>
         <NavBar />
@@ -557,6 +602,24 @@ export default function ChatPage() {
               <i className="fa-solid fa-magnifying-glass" aria-hidden="true"/>
               <input type="search" placeholder="Tìm hội thoại" aria-label="Tìm hội thoại" value={keyword} onChange={(event) => setKeyword(event.target.value)}/>
             </label>
+            <div className={styles.conversationFilters} role="group" aria-label="Lọc hội thoại">
+              <button
+                  type="button"
+                  className={`${styles.filterButton} ${conversationFilter === 'all' ? styles.filterButtonActive : ''}`}
+                  aria-pressed={conversationFilter === 'all'}
+                  onClick={() => setConversationFilter('all')}
+              >
+                Tất cả
+              </button>
+              <button
+                  type="button"
+                  className={`${styles.filterButton} ${conversationFilter === 'unread' ? styles.filterButtonActive : ''}`}
+                  aria-pressed={conversationFilter === 'unread'}
+                  onClick={() => setConversationFilter('unread')}
+              >
+                Chưa đọc
+              </button>
+            </div>
             <div className={styles.chatList}>
               {loadingList && (
                   <p className={styles.empty}>
@@ -572,12 +635,18 @@ export default function ChatPage() {
                   !listError &&
                   filteredContacts.length === 0 && (
                       <p className={styles.empty}>
-                        Không có hội thoại phù hợp
+                        {conversationFilter === 'unread'
+                            ? keyword.trim() ? 'Không có hội thoại chưa đọc phù hợp' : 'Không có tin nhắn chưa đọc'
+                            : 'Không có hội thoại phù hợp'}
                       </p>
                   )}
               {filteredContacts.map((contact) => {
                 const key = conversationKey(contact)
                 const unread = unreadCounts[key] ?? 0
+                const lastMessage = lastMessages[key]
+                const preview = lastMessage
+                    ? `${lastMessage.name === currentUser ? 'Bạn: ' : ''}${lastMessage.mes}`
+                    : contact.type === 1 ? 'Phòng chat' : 'Chat cá nhân'
                 const active = selected !== null &&
                     conversationKey(selected) === key
                 return (
@@ -593,8 +662,8 @@ export default function ChatPage() {
                     <span className={`${styles.name} ${unread > 0 ? styles.unreadName : ''}`}>
                       {contact.name}
                     </span>
-                    <span className={styles.lastMessage}>
-                      {contact.type === 1 ? 'Phòng chat' : 'Chat cá nhân'}
+                    <span className={styles.lastMessage} title={preview}>
+                      {preview}
                     </span>
                   </span>
                       {unread > 0 && (
