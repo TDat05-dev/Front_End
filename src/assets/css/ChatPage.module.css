@@ -391,4 +391,39 @@
   font-weight: 700;
 }
 
+.conversationFilters {
+  display: flex;
+  flex-shrink: 0;
+  gap: 8px;
+  padding: 0 16px 12px;
+}
+
+.filterButton {
+  padding: 6px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-text-muted);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+.filterButton:hover {
+  background: var(--color-hover);
+}
+.filterButton:focus-visible {
+  outline: 2px solid #0068ff;
+  outline-offset: 2px;
+}
+
+.filterButtonActive {
+  border-color: #0068ff;
+  background: var(--color-active);
+  color: #0068ff;
+  font-weight: 600;
+}
+.filterButtonActive:hover {
+  background: var(--color-active);
+}
+
 /*# sourceMappingURL=ChatPage.module.css.map */
