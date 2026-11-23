@@ -5,6 +5,7 @@ export function useSocket<T>(event: string, params: object = {}) {
   const [data, setData] = useState<T | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [version, setVersion] = useState(0)
   const payload = JSON.stringify(params)
 
   useEffect(() => {
@@ -28,7 +29,9 @@ export function useSocket<T>(event: string, params: object = {}) {
     return () => {
       ignore = true
     }
-  }, [event, payload])
+  }, [event, payload, version])
 
-  return { data, loading, error }
+  const reload = () => setVersion((v) => v + 1)
+
+  return { data, loading, error, reload }
 }

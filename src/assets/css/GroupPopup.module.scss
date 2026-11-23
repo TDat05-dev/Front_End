@@ -1,0 +1,169 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(8, 28, 54, 0.4);
+  backdrop-filter: blur(2px);
+}
+
+.popup {
+  width: 100%;
+  max-width: 400px;
+  overflow: hidden;
+  border: 1px solid $color-border;
+  border-radius: 12px;
+  background: $color-bg;
+  box-shadow: 0 8px 32px rgba(8, 28, 54, 0.15);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+  padding: 0 20px;
+  border-bottom: 1px solid $color-border;
+
+  h2 {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 600;
+    color: $color-text;
+  }
+}
+
+.closeButton {
+  @include flex-center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  font-size: 18px;
+  color: $color-icon;
+  cursor: pointer;
+
+  &:hover {
+    background: $color-hover;
+    color: $color-text;
+  }
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  padding: 16px 20px 0;
+}
+
+.tab {
+  display: inline-flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  background: $color-input-bg;
+  font-size: 14px;
+  font-weight: 500;
+  color: $color-text;
+  cursor: pointer;
+
+  &:hover {
+    background: $color-input-bg-hover;
+  }
+}
+
+.tabActive,
+.tabActive:hover {
+  background: $color-primary;
+  color: $color-white;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 20px 20px;
+}
+
+.label {
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: $color-text;
+}
+
+.input {
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid $color-input-border;
+  border-radius: 8px;
+  outline: none;
+  background: transparent;
+  font-size: 15px;
+  color: $color-text;
+
+  &:focus {
+    border-color: $color-primary;
+  }
+
+  &::placeholder {
+    color: $color-placeholder;
+  }
+}
+
+.hint {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: $color-text-muted;
+}
+
+.error,
+.success {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 12px 0 0;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.error {
+  background: rgba(240, 68, 56, 0.1);
+  color: #d92d20;
+}
+
+.success {
+  background: rgba(18, 183, 106, 0.1);
+  color: #039855;
+}
+
+.submit {
+  height: 40px;
+  margin-top: 16px;
+  border: none;
+  border-radius: 8px;
+  background: $color-primary;
+  font-size: 15px;
+  font-weight: 500;
+  color: $color-white;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background: $color-primary-hover;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
