@@ -63,6 +63,19 @@ $bg-hover: $color-hover;
   }
 }
 
+.groupButton {
+  background: $color-active;
+  color: $color-primary;
+
+  &:hover {
+    background: $color-input-bg-hover;
+  }
+
+  & + .searchUserButton {
+    margin-left: 0;
+  }
+}
+
 .body {
   flex: 1;
   overflow-y: auto;

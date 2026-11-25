@@ -51,6 +51,17 @@
   }
 }
 
+.groupButton {
+  background: var(--color-active);
+  color: #0068ff;
+}
+.groupButton:hover {
+  background: var(--color-input-bg-hover);
+}
+.groupButton + .searchUserButton {
+  margin-left: 0;
+}
+
 .body {
   flex: 1;
   overflow-y: auto;

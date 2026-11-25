@@ -3,6 +3,7 @@ import NavBar from '../../components/NavBar'
 import styles from '../../assets/css/FriendsPage.module.scss'
 import { useSocket } from '../../hooks/useSocket'
 import UserSearchPopup from '../../components/UserSearchPopup'
+import GroupPopup from '../../components/GroupPopup'
 import { auth } from '../../auth/auth'
 import { getAddedContacts } from '../../data/addedContacts'
 import type { Contact, ContactType } from '../../data/contacts'
@@ -41,9 +42,10 @@ export default function FriendsPage() {
   const [keyword, setKeyword] = useState('')
   const [sortOrder, setSortOrder] = useState<SortOrder>('asc')
   const [tab, setTab] = useState<TabKey>('all')
-  const { data, loading, error } = useSocket<Contact[]>('GET_USER_LIST')
+  const { data, loading, error, reload } = useSocket<Contact[]>('GET_USER_LIST')
 
   const [showSearch, setShowSearch] = useState(false)
+  const [showGroup, setShowGroup] = useState(false)
   const [added, setAdded] = useState(() => getAddedContacts(auth.user ?? ''))
 
   const serverContacts: Contact[] = (data ?? []).map((c) => ({ ...c, type: Number(c.type) as ContactType }))
@@ -84,6 +86,10 @@ export default function FriendsPage() {
           <header className={styles.header}>
             <i className="fa-solid fa-address-book" aria-hidden="true" />
             <h1>Danh bạ</h1>
+            <button type="button" className={`${styles.searchUserButton} ${styles.groupButton}`} onClick={() => setShowGroup(true)}>
+              <i className="fa-solid fa-users" aria-hidden="true" />
+              <span>Nhóm</span>
+            </button>
             <button type="button" className={styles.searchUserButton} onClick={() => setShowSearch(true)}>
               <i className="fa-solid fa-user-plus" aria-hidden="true" />
               <span>Tìm người dùng</span>
@@ -158,6 +164,15 @@ export default function FriendsPage() {
             </section>
           </div>
         </div>
+        {showGroup && (
+            <GroupPopup
+                onClose={() => setShowGroup(false)}
+                onDone={() => {
+                  reload()
+                  setTab(1)
+                }}
+            />
+        )}
         {showSearch && (
             <UserSearchPopup
                 contacts={serverContacts}
