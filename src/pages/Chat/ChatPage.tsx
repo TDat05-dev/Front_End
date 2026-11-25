@@ -41,6 +41,13 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null
 }
 
+function roomMessages(data: unknown): unknown[] | null {
+  if (!isRecord(data)) return null
+  const list = data.chatData ?? data.chatMess
+  if (list === null || list === undefined) return []
+  return Array.isArray(list) ? list : null
+}
+
 function parseMessage(value: unknown): Message | null {
   if (!isRecord(value)) return null
 
@@ -60,7 +67,7 @@ function parseMessage(value: unknown): Message | null {
     to: value.to,
     mes: value.mes,
     type,
-    id: typeof value.id === 'number' ? value.id : undefined,
+    id: typeof value.id === 'number' && value.id > 0 ? value.id : undefined,
     createAt:
         typeof value.createAt === 'string'
             ? value.createAt
@@ -192,10 +199,12 @@ export default function ChatPage() {
       const message = parseMessage(response.data)
       const me = auth.user
       if (!message || !me) return
-      if (message.type !== 0) return
-      if (message.name !== me && message.to !== me) return
-      if (message.name === me && message.to === me) return
-      const contactName = message.name === me ? message.to : message.name
+      if (!message.createAt) message.createAt = new Date().toISOString().slice(0, 19).replace('T', ' ')
+      if (message.type === 0) {
+        if (message.name !== me && message.to !== me) return
+        if (message.name === me && message.to === me) return
+      }
+      const contactName = message.type === 1 || message.name === me ? message.to : message.name
       const contact: Contact = {
         name: contactName,
         type: message.type,
@@ -323,6 +332,17 @@ export default function ChatPage() {
       if (!Array.isArray(response.data)) {
         throw new Error('Danh sách hội thoại không đúng định dạng')
       }
+      const rooms: Contact[] = []
+      for (const item of response.data) {
+        if (!isRecord(item) || Number(item.type) !== 1 || typeof item.name !== 'string' || !item.name.trim()) continue
+        if (rooms.some((room) => room.name === item.name)) continue
+        rooms.push({
+          name: item.name,
+          type: 1,
+          actionTime: typeof item.actionTime === 'string' ? item.actionTime : '',
+        })
+      }
+
       const candidates: Contact[] = []
       for (const item of response.data) {
         if (
@@ -391,17 +411,33 @@ export default function ChatPage() {
           actionTime: lastMessageTime,
         })
       }
+      for (const room of rooms) {
+        if (isIgnored() || auth.user !== me) return
+        const previewVersion = previewVersionsRef.current[conversationKey(room)] ?? 0
+        const roomResponse = await requestHistory('GET_ROOM_CHAT_MES', room.name).catch(() => null)
+        if (isIgnored() || auth.user !== me) return
+        const rawRoom = roomResponse?.status === 'success' ? roomMessages(roomResponse.data) : null
+        if (!rawRoom) {
+          verified.push(room)
+          continue
+        }
+        const history = rawRoom
+            .map(parseMessage)
+            .filter((message): message is Message => message !== null && belongsTo(message, room, me))
+        updateHistoryPreview(room, history, previewVersion)
+        verified.push({ ...room, actionTime: latestMessage(history)?.createAt ?? room.actionTime })
+      }
+
       if (isIgnored() || auth.user !== me) return
       verified.sort((a, b) =>
           b.actionTime.localeCompare(a.actionTime),
       )
-      const added = getAddedContacts(me).filter((contact) => !verified.some((item) => item.name === contact.name))
+      const added = getAddedContacts(me).filter((contact) => !verified.some((item) => item.type === 0 && item.name === contact.name))
       setContacts((previous) => {
         const recent = previous.filter(
             (contact) =>
-                contact.type === 0 &&
-                !verified.some((item) => item.name === contact.name) &&
-                !added.some((item) => item.name === contact.name),
+                !verified.some((item) => conversationKey(item) === conversationKey(contact)) &&
+                !added.some((item) => conversationKey(item) === conversationKey(contact)),
         )
         return [...recent, ...added, ...verified]
       })
@@ -453,7 +489,7 @@ export default function ChatPage() {
         if (!isRecord(response.data) || response.data.name !== contact.name) {
           throw new Error('Dữ liệu phòng chat không đúng định dạng',)
         }
-        rawMessages = response.data.chatMess
+        rawMessages = roomMessages(response.data)
       } else {
         rawMessages = response.data
       }
@@ -510,7 +546,7 @@ export default function ChatPage() {
       requestHistory(event, contact.name)
         .then((response) => {
           if (!mountedRef.current || response.status !== 'success') return
-          const raw = contact.type === 1 && isRecord(response.data) ? response.data.chatMess : response.data
+          const raw = contact.type === 1 ? roomMessages(response.data) : response.data
           if (!Array.isArray(raw)) return
           const sent = raw
             .map(parseMessage)
