@@ -236,6 +236,7 @@
 }
 
 .messageInput {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -424,6 +425,90 @@
 }
 .filterButtonActive:hover {
   background: var(--color-active);
+}
+
+.composerTools {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 4px;
+}
+
+.composerToolActive {
+  background: var(--color-active);
+}
+
+.attachmentPanel,
+.composerStickerPanel {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 12px;
+  z-index: 20;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-bg);
+  color: var(--color-text);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.16);
+}
+
+.attachmentPanel {
+  width: 190px;
+  max-width: calc(100% - 24px);
+  padding: 6px;
+}
+
+.attachmentOption {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.attachmentOption i {
+  width: 20px;
+  color: #0068ff;
+  font-size: 20px;
+  text-align: center;
+}
+.attachmentOption:hover {
+  background: var(--color-hover);
+}
+
+.composerTools button:focus-visible {
+  outline: 2px solid #0068ff;
+  outline-offset: 2px;
+}
+
+.composerStickerPanel {
+  width: 300px;
+  max-width: calc(100% - 24px);
+  padding: 12px;
+}
+
+.composerPanelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.composerStickerEmpty {
+  padding: 28px 8px;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+.composerStickerEmpty i {
+  font-size: 36px;
+}
+.composerStickerEmpty p {
+  margin: 12px 0 0;
+  font-size: 14px;
 }
 
 /*# sourceMappingURL=ChatPage.module.css.map */

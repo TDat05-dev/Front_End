@@ -219,6 +219,7 @@ $bg-active: $color-active;
   padding: 16px;
 }
 .messageInput {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -392,5 +393,93 @@ $bg-active: $color-active;
 
   &:hover {
     background: $bg-active;
+  }
+}
+
+.composerTools {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 4px;
+}
+
+.composerToolActive {
+  background: $bg-active;
+}
+
+.attachmentPanel,
+.composerStickerPanel {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 12px;
+  z-index: 20;
+  border: 1px solid $border;
+  border-radius: 12px;
+  background: $color-bg;
+  color: $color-text;
+  box-shadow: 0 6px 24px rgb(0 0 0 / 16%);
+}
+
+.attachmentPanel {
+  width: 190px;
+  max-width: calc(100% - 24px);
+  padding: 6px;
+}
+
+.attachmentOption {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: $color-text;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+
+  i {
+    width: 20px;
+    color: $color-primary;
+    font-size: 20px;
+    text-align: center;
+  }
+
+  &:hover {
+    background: $bg-hover;
+  }
+}
+
+.composerTools button:focus-visible {
+  outline: 2px solid $color-primary;
+  outline-offset: 2px;
+}
+
+.composerStickerPanel {
+  width: 300px;
+  max-width: calc(100% - 24px);
+  padding: 12px;
+}
+
+.composerPanelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.composerStickerEmpty {
+  padding: 28px 8px;
+  color: $color-text-muted;
+  text-align: center;
+
+  i {
+    font-size: 36px;
+  }
+
+  p {
+    margin: 12px 0 0;
+    font-size: 14px;
   }
 }
