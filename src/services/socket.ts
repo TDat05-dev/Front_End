@@ -113,9 +113,52 @@ export function disconnect() {
     clearTimeout(retryTimer)
     retryTimer = null
   }
-  socket?.close()
+  const closingSocket = socket
   socket = null
+  if (closingSocket) {
+    closingSocket.onopen = null
+    closingSocket.onmessage = null
+    closingSocket.onclose = null
+    closingSocket.onerror = null
+    closingSocket.close()
+  }
+  reLoggingIn = false
+  loginUser = null
+  queue.length = 0
+  retryCount = 0
   setStatus('idle')
+}
+
+export async function logout(): Promise<void> {
+  try {
+    if (socket?.readyState === WebSocket.OPEN && !reLoggingIn) {
+      await new Promise<void>((resolve) => {
+        const finish = () => {
+          clearTimeout(timer)
+          offLogout()
+          offStatus()
+          resolve()
+        }
+        const offLogout = on('LOGOUT', finish)
+        const offStatus = onStatusChange(() => {
+          if (status.state !== 'online') finish()
+        })
+        const timer = setTimeout(finish, 3000)
+
+        try {
+          socket?.send(JSON.stringify({
+            action: 'onchat',
+            data: { event: 'LOGOUT' },
+          }))
+        } catch {
+          finish()
+        }
+      })
+    }
+  } finally {
+    clearAuth()
+    disconnect()
+  }
 }
 
 window.addEventListener('online', () => {
@@ -161,7 +204,7 @@ function updateAuth(res: SocketResponse) {
     reLogin()
   }
 
-  if (res.event === 'LOGOUT') {
+  if (res.event === 'LOGOUT' && res.status === 'success') {
     clearAuth()
   }
 }

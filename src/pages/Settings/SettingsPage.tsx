@@ -1,9 +1,11 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import NavBar from '../../components/NavBar'
 import AccountSection from './AccountSection'
 import styles from '../../assets/css/SettingsPage.module.scss'
 import { useTheme } from '../../hooks/useTheme'
 import type { Theme } from '../../utils/theme'
+import { logout } from '../../services/socket'
 
 type TabKey = 'account' | 'appearance' | 'logout'
 
@@ -20,7 +22,18 @@ const TABS: { key: TabKey; icon: string; label: string }[] = [
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<TabKey>('account')
+  const [loggingOut, setLoggingOut] = useState(false)
+  const logoutBusyRef = useRef(false)
+  const navigate = useNavigate()
   const { theme, setTheme } = useTheme()
+
+  async function handleLogout() {
+    if (logoutBusyRef.current) return
+    logoutBusyRef.current = true
+    setLoggingOut(true)
+    await logout()
+    navigate('/login', { replace: true })
+  }
 
   return (
     <>
@@ -39,6 +52,7 @@ export default function SettingsPage() {
                 type="button"
                 className={`${styles.menuItem} ${activeTab === tab.key ? styles.menuItemActive : ''}`}
                 aria-current={activeTab === tab.key ? 'page' : undefined}
+                disabled={loggingOut}
                 onClick={() => setActiveTab(tab.key)}
               >
                 <i className={tab.icon} aria-hidden="true" />
@@ -79,8 +93,8 @@ export default function SettingsPage() {
                 Đăng xuất khỏi tài khoản trên thiết bị này. Bạn sẽ cần đăng nhập lại để tiếp tục sử dụng.
               </p>
               <div className={styles.actions}>
-                <button type="button" className={styles.dangerButton}>
-                  <i className="fa-solid fa-right-from-bracket" aria-hidden="true" /> Đăng xuất
+                <button type="button" className={styles.dangerButton} disabled={loggingOut} aria-busy={loggingOut} onClick={() => void handleLogout()}>
+                  <i className="fa-solid fa-right-from-bracket" aria-hidden="true" /> {loggingOut ? 'Đang đăng xuất...' : 'Đăng xuất'}
                 </button>
               </div>
             </section>
