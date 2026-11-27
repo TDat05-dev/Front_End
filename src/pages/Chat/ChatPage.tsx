@@ -1,5 +1,6 @@
 import {useEffect, useRef, useState, type FormEvent,} from 'react'
 import NavBar from '../../components/NavBar'
+import ChatComposerTools from '../../components/ChatComposerTools'
 import { auth } from '../../auth/auth'
 import {on, request, send,} from '../../services/socket'
 import type { Contact } from '../../data/contacts'
@@ -778,6 +779,10 @@ export default function ChatPage() {
                       <div ref={endRef} />
                     </div>
                     <form className={styles.messageInput} onSubmit={handleSend}>
+                      <ChatComposerTools
+                          key={conversationKey(selected)}
+                          disabled={loadingHistory}
+                      />
                       <label className={styles.inputWrapper}>
                         <input type="text" placeholder="Nhập tin nhắn..." aria-label="Nhập tin nhắn" autoComplete="off" value={draft} disabled={loadingHistory} onChange={(event) => setDraft(event.target.value)}/>
                       </label>
